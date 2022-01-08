@@ -15,11 +15,14 @@ public with sharing class PurchaseOrdersWindowController {
     @AuraEnabled
     public static void createNew(Id accountId, String orderName,
             String lineName, String productName, Double unitPrice, Integer quantity){
+            // створити нове замовлення
             Purchase_Orders__c order = new Purchase_Orders__c(Account__c = accountId, Name = orderName, Status__c = 'Draft');
             insert order;
 
+            // підтягнути з бази відповідний продукт
             Product2 prod = [SELECT Id, Name FROM Product2 WHERE Name =: productName].get(0);
 
+            // створити інформацію для замовлення
             Purchase_Orders_Line__c line = new Purchase_Orders_Line__c(
                     Purchase_Orders__c = order.Id, Product__c = prod.Id, Name = lineName,
                     Unit_Price__c = unitPrice, Quantity__c = quantity);

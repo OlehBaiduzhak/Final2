@@ -6,16 +6,14 @@
 <template>
     <lightning-quick-action-panel header="New Purchase Order">
         <lightning-card class="slds-p-around_medium">
-            <template if:true={isError}>
-                Error
-            </template>
             <div class="slds-p-horizontal_medium">
                 <lightning-input class=slds-p-bottom_small label="Purchase Order Name" onchange={handleInputOrderNameChange}></lightning-input>
                 <lightning-input class=slds-p-bottom_small label="Line Name" onchange={handleInputLineNameChange}></lightning-input>
                 <lightning-input class=slds-p-bottom_small label="Quantity" onchange={handleInputQuantityChange}></lightning-input>
                 <lightning-input class=slds-p-bottom_small label="Unit Price" onchange={handleInputUnitPriceChange}></lightning-input>
                 <lightning-input class=slds-p-bottom_small label="Product Name" onchange={handleInputProductNameChange}></lightning-input>
-                <lightning-button label="Create" onclick={check}></lightning-button>
+                <lightning-button label="Create" onclick={save}></lightning-button>
+                <lightning-button label="Cancel" onclick={cancel}></lightning-button>
             </div>
         </lightning-card>
     </lightning-quick-action-panel>

@@ -12,14 +12,15 @@ export default class PurchaseOrdersWindow extends LightningElement {
 
     @api recordId;
 
-    inputOrderName;
+    inputOrderName= '';
 
-    inputQuantity;
-    inputLineName;
-    inputUnitPrice;
-    inputProductName;
+    inputQuantity= '';
+    inputLineName= '';
+    inputUnitPrice= '';
+    inputProductName= '';
 
-    isError;
+    isError = false;
+    validProductName = false;
 
     @wire(productNames, {})
     names;
@@ -44,16 +45,36 @@ export default class PurchaseOrdersWindow extends LightningElement {
         this.inputProductName = event.target.value;
     }
 
-    check(){
-        const toastEvent2 = new ShowToastEvent({
-            title: "Check",
-            message: this.recordId + this.inputOrderName + this.inputLineName +
-                this.inputProductName + this.inputQuantity + this.inputUnitPrice+ this.names.data,
-            variant: "error"
-        });
-        this.dispatchEvent(toastEvent2);
+    save(){
 
+        this.isError = false;
+        this.validProductName = false;
 
+        if(this.inputOrderName == '') {
+            this.isError = true;
+        }
+        if(this.inputLineName == '') {
+            this.isError = true;
+        }
+
+        for(let x in this.names.data){
+            if(this.names.data[x] === this.inputProductName) this.validProductName = true;
+        }
+        if(!this.validProductName){
+            this.isError = true;
+            const wrongProductName = new ShowToastEvent({
+                title: "Error",
+                message: "Product with than name was not found "+this.validProductName,
+                variant: "error"
+            });
+            this.dispatchEvent(wrongProductName);
+        }
+        if(this.inputQuantity == '' || +this.inputQuantity <= 0) {
+            this.isError = true;
+        }
+        if(this.inputUnitPrice == '' || +this.inputUnitPrice <= 0) {
+            this.isError = true;
+        }
 
         if(this.isError){
             const toastEvent = new ShowToastEvent({
@@ -67,15 +88,23 @@ export default class PurchaseOrdersWindow extends LightningElement {
             });
             this.dispatchEvent(toastEvent);
         }
+        else {
+
+            createNew({accountId: this.recordId, orderName: this.inputOrderName,
+                lineName: this.inputLineName, productName:this.inputProductName,
+                quantity: this.inputQuantity, unitPrice: this.inputUnitPrice})
+                .then(() =>{
+
+            }).catch(() =>{
+
+            }).finally(()=>{
+                this.dispatchEvent(new CloseActionScreenEvent());
+            })
+
+        }
     }
 
-    save(){
-
-        createNew({accountId: this.recordId, orderName: this.inputOrderName,
-            lineName: this.inputLineName, productName:this.inputProductName,
-            quantity: this.inputQuantity, unitPrice: this.inputUnitPrice});
-
+    cancel(){
         this.dispatchEvent(new CloseActionScreenEvent());
     }
-
 }
